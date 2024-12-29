@@ -1,0 +1,25 @@
+# Byte-compiled files
+*.pyc
+*.pyo
+__pycache__/
+
+# macOS system files
+.DS_Store
+__MACOSX/
+
+# Virtual environment
+venv/
+env/
+
+# Django media
+media/
+
+# Logs and debug files
+*.log
+
+# Database files
+*.sqlite3
+
+# IDE-specific files
+.idea/
+

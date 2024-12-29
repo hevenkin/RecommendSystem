@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据可视化</title>
+    {% load static %}
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .card {
+            margin-top: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .card-header {
+            background-color: #007bff;
+            color: #fff;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        .loading-message {
+            text-align: center;
+            margin-top: 20px;
+            display: none;
+        }
+        .loading-message .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
+        #visualization-content img {
+            width: 100%;
+            max-height: 500px;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">数据可视化</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'recommendation_home' %}">推荐系统</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header text-center">
+                        <h2>数据可视化</h2>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <button class="btn btn-link" onclick="loadVisualization('reason_count')">
+                                    不同疾病对应药品数量
+                                </button>
+                            </li>
+                            <li class="list-group-item">
+                                <button class="btn btn-link" onclick="loadVisualization('rating_histogram')">
+                                    药品评分分布
+                                </button>
+                            </li>
+                            <li class="list-group-item">
+                                <button class="btn btn-link" onclick="loadVisualization('top_companies')">
+                                    药品数量排名前10的公司
+                                </button>
+                            </li>
+                        </ul>
+                        <!-- 加载提示 -->
+                        <div class="loading-message" id="loading-message">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2">图像生成中，请稍候...</p>
+                        </div>
+                        <!-- 图像内容 -->
+                        <div id="visualization-content" class="mt-4"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function loadVisualization(plotType) {
+            const loadingMessage = document.getElementById('loading-message');
+            const visualizationContent = document.getElementById('visualization-content');
+
+            // 显示加载动画
+            loadingMessage.style.display = 'block';
+            visualizationContent.innerHTML = '';
+
+            // 发送请求加载图像
+            fetch(`/plot/${plotType}/`)
+                .then(response => response.text())
+                .then(html => {
+                    loadingMessage.style.display = 'none';
+                    visualizationContent.innerHTML = html;
+                })
+                .catch(error => {
+                    loadingMessage.style.display = 'none';
+                    visualizationContent.innerHTML = '<p class="text-danger">加载失败，请重试。</p>';
+                    console.error('Error:', error);
+                });
+        }
+    </script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+</body>
+</html>
